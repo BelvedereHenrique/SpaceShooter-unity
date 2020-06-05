@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Security.Cryptography;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public abstract class Powerup : MonoBehaviour
@@ -6,9 +8,12 @@ public abstract class Powerup : MonoBehaviour
     [SerializeField]
     public virtual float _movementSpeed { get; set; }
 
-    public virtual void Start() { 
+    public virtual AudioClip _audioClipBase { get; set; }
+
+    public virtual void Start()
+    {
     }
-    
+
     void Update()
     {
         HandleMovement();
@@ -34,11 +39,17 @@ public abstract class Powerup : MonoBehaviour
         {
             Player player = other.GetComponent<Player>();
             if (player != null)
+            {
                 OnPlayerCollision2D(player);
+                if(_audioClipBase != null)
+                    AudioSource.PlayClipAtPoint(_audioClipBase, gameObject.transform.position);
+
+                Destroy(this.gameObject);
+            }
         }
     }
 
     public abstract void OnPlayerCollision2D(Player player);
 
-    public abstract IEnumerator SpawnRoutine( GameObject container);
+    public abstract IEnumerator SpawnRoutine(GameObject container);
 }

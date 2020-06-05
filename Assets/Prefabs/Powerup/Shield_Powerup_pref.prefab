@@ -148,6 +148,7 @@ MonoBehaviour:
   _respawnFrequencyFrom: 5
   _respawnFrequencyTo: 11
   _speed: 3
+  _collectSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!95 &198814952
 Animator:
   serializedVersion: 3

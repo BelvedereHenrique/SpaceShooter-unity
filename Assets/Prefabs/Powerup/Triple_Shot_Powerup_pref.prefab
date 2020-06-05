@@ -144,7 +144,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b0894533face74db7915578290140a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _container: {fileID: 0}
+  _speed: 5
+  _durationInSecs: 5
+  _respawnFrequencyFrom: 10
+  _respawnFrequencyTo: 25
+  _collectSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!95 &1865280008
 Animator:
   serializedVersion: 3

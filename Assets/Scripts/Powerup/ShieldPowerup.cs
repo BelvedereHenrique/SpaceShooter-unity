@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ShieldPowerup : Powerup
@@ -17,15 +18,17 @@ public class ShieldPowerup : Powerup
     [SerializeField]
     private float _speed = 2.5f;
 
+    [SerializeField]
+    private AudioClip _collectSound = null;
     public override void Start()
     {
         _movementSpeed = _speed;
+        _audioClipBase = _collectSound;
     }
 
     public override void OnPlayerCollision2D(Player player)
     {
         player.ActivateShieldPowerup(_durationInSecs);
-        Destroy(this.gameObject);
     }
 
     public override IEnumerator SpawnRoutine(GameObject container)

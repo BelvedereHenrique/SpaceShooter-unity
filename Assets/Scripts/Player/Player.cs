@@ -24,9 +24,12 @@ public class Player : MonoBehaviour
     private GameObject _rightDamageVisualizer = null;
     [SerializeField]
     private GameObject _leftDamageVisualizer = null;
+    [SerializeField]
+    private AudioClip _laserShotAudioClip = null;
     #endregion
     #region nonserializable
-    private SpawnManager _spawnManager;
+    private SpawnManager _spawnManager = null;
+    private AudioSource _audioSource = null;
     private float _nextFire = 0;
     #endregion
     #region powerups
@@ -48,12 +51,21 @@ public class Player : MonoBehaviour
     void Start()
     {
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-
         transform.transform.position = new Vector3(0, 0, 0);
         if (_spawnManager == null)
         {
             Debug.LogError("Spawn Manager is null");
         }
+        _audioSource = GetComponent<AudioSource>();
+        if(_audioSource == null)
+        {
+            Debug.LogError("Missing AudioSource for player. Reference is null.");
+        }
+        else
+        {
+            _audioSource.clip = _laserShotAudioClip;
+        }
+
     }
 
     void Update()
@@ -129,6 +141,9 @@ public class Player : MonoBehaviour
         }
         else
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f), Quaternion.identity);
+
+        _audioSource.Play();
+
     }
 
     private void HandleShotFireRate()
