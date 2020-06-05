@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private int _score = 10;
 
+    private AudioSource _audioSource;
+
     private Player _playerRef;
     private Animator _animator;
     private BoxCollider2D _boxCollider;
@@ -32,7 +34,11 @@ public class Enemy : MonoBehaviour
         if(_boxCollider == null)
         {
             Debug.LogError("Null BoxCollider2D reference on Enemey");
-
+        }
+        _audioSource = GetComponent<AudioSource>();
+        if(_audioSource == null)
+        {
+            Debug.LogError("Null AudioSource reference on Enemey");
         }
     }
 
@@ -84,6 +90,7 @@ public class Enemy : MonoBehaviour
             if (_playerRef != null)
                 _playerRef.AddScore(_score);
         }
+        _audioSource.Play();
         Destroy(this.gameObject,2.35f);
     }
 }

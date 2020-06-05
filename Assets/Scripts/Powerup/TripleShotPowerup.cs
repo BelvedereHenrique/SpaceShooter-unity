@@ -15,9 +15,12 @@ public class TripleShotPowerup : Powerup
     [SerializeField]
     private float _respawnFrequencyTo = 25;
 
+    [SerializeField]
+    private AudioClip _collectSound = null;
     public override void Start()
     {
         base._movementSpeed = _speed;
+        _audioClipBase = _collectSound;
     }
 
     public override IEnumerator SpawnRoutine(GameObject container)
@@ -31,6 +34,6 @@ public class TripleShotPowerup : Powerup
     public override void OnPlayerCollision2D(Player player)
     {
         player.ActivateTripleShotPowerup(_durationInSecs);
-        Destroy(this.gameObject);
     }
+
 }

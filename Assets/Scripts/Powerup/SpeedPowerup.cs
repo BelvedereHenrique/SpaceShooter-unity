@@ -17,16 +17,20 @@ public class SpeedPowerup : Powerup
 
     [SerializeField]
     private float _respawnFrequencyTo = 10;
+     
+    [SerializeField]
+    private AudioClip _collectSound = null;
 
     public override void Start()
     {
         _movementSpeed = _speed;
+        _audioClipBase = _collectSound;
+
     }
 
     public override void OnPlayerCollision2D(Player player)
     {
         player.ActivateSpeedPowerup(_durationInSecs, _speedBonus);
-        Destroy(this.gameObject);
     }
 
     public override IEnumerator SpawnRoutine(GameObject container)
@@ -36,4 +40,6 @@ public class SpeedPowerup : Powerup
         powerUp.transform.SetParent(container.gameObject.transform);
         yield return new WaitForSeconds(Random.Range(_respawnFrequencyFrom, _respawnFrequencyTo));
     }
+
+
 }

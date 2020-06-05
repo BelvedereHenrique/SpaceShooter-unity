@@ -149,6 +149,7 @@ MonoBehaviour:
   _durationInSecs: 5
   _respawnFrequencyFrom: 10
   _respawnFrequencyTo: 25
+  _collectSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!95 &1225080182
 Animator:
   serializedVersion: 3
