@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Security.Cryptography;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public abstract class Powerup : MonoBehaviour

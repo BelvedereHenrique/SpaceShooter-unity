@@ -1,96 +1,120 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
-public class Enemy : MonoBehaviour
+namespace Enemy
 {
-
-    [SerializeField]
-    private float _speed = 4;
-
-    [SerializeField]
-    private int _damage = 1;
-
-    [SerializeField]
-    private int _score = 10;
-
-    private AudioSource _audioSource;
-
-    private Player _playerRef;
-    private Animator _animator;
-    private BoxCollider2D _boxCollider;
-    void Start()
+    public class Enemy : MonoBehaviour
     {
-        _playerRef = GameObject.Find("Player").GetComponent<Player>();
-        if(_playerRef == null)
+
+        [SerializeField]
+        private float speed = 4;
+
+        [SerializeField]
+        private GameObject laserPrefab = null;
+    
+        private float _fireRate = 3.0f;
+        private float _canFire = -1;
+    
+        [SerializeField]
+        private int damage = 1;
+
+        [SerializeField]
+        private int score = 10;
+
+        private AudioSource _audioSource;
+
+        private Player _playerRef;
+        private Animator _animator;
+        private BoxCollider2D _boxCollider;
+        private static readonly int OnEnemyDeath = Animator.StringToHash("OnEnemyDeath");
+
+        private void Start()
         {
-            Debug.LogError("Null Player reference on Enemey");
-        }
-        _animator = GetComponent<Animator>();
-        if(_animator == null)
-        {
-            Debug.LogError("Null Animator reference on Enemey");
+            _playerRef = GameObject.Find("Player").GetComponent<Player>();
+            if(_playerRef == null)
+            {
+                Debug.LogError("Null Player reference on Enemy");
+            }
+            _animator = GetComponent<Animator>();
+            if(_animator == null)
+            {
+                Debug.LogError("Null Animator reference on Enemy");
+            }
+
+            _boxCollider = GetComponent<BoxCollider2D>();
+            if(_boxCollider == null)
+            {
+                Debug.LogError("Null BoxCollider2D reference on Enemy");
+            }
+            _audioSource = GetComponent<AudioSource>();
+            if(_audioSource == null)
+            {
+                Debug.LogError("Null AudioSource reference on Enemy");
+            }
         }
 
-        _boxCollider = GetComponent<BoxCollider2D>();
-        if(_boxCollider == null)
+        private void Update()
         {
-            Debug.LogError("Null BoxCollider2D reference on Enemey");
-        }
-        _audioSource = GetComponent<AudioSource>();
-        if(_audioSource == null)
-        {
-            Debug.LogError("Null AudioSource reference on Enemey");
-        }
-    }
+            Move();
+        
+            if (!(Time.time > _canFire)) return;
 
-    void Update()
-    {
-        Move();
-    }
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            var enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+            var lasers = enemyLaser.GetComponentsInChildren<Laser>();
+            foreach (var t in lasers)
+            {
+                t.AssingEnemyLaser();
+            }
 
-    private void Move()
-    {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        if (transform.position.y < -7)
-        {
-            Respawn();
-        }
-    }
-
-    private void Respawn()
-    {
-        float randomX = Random.Range(-10f, 10f);
-        transform.position = new Vector3(randomX, 8);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            Respawn();
-            return;
-        }
-        if (other.CompareTag("Asteroid"))
-        {
-            return;
         }
 
-        _speed = 0;
-        _boxCollider.enabled = false;
-        _animator.SetTrigger("OnEnemyDeath");
-
-        if (other.CompareTag("Player"))
+        private void Move()
         {
-            if (_playerRef != null)
-                _playerRef.TakeDamage(_damage);
+            transform.Translate(Vector3.down * speed * Time.deltaTime);
+            if (transform.position.y < -7)
+            {
+                Respawn();
+            }
         }
 
-        if (other.CompareTag("Laser"))
+        private void Respawn()
         {
-            Destroy(other.gameObject);
-            if (_playerRef != null)
-                _playerRef.AddScore(_score);
+            var randomX = Random.Range(-10f, 10f);
+            transform.position = new Vector3(randomX, 8);
         }
-        _audioSource.Play();
-        Destroy(this.gameObject,2.35f);
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag($"EnemyLaser") || other.CompareTag("Asteroid"))
+            {
+                return;
+            }
+            if (other.CompareTag("Enemy"))
+            {
+                Respawn();
+                return;
+            }
+
+            speed = 0;
+            _boxCollider.enabled = false;
+            _animator.SetTrigger(OnEnemyDeath);
+
+            if (other.CompareTag("Player"))
+            {
+                if (_playerRef != null)
+                    _playerRef.TakeDamage(damage);
+            }
+
+            if (other.CompareTag("Laser"))
+            {
+                Destroy(other.gameObject);
+                if (_playerRef != null)
+                    _playerRef.AddScore(score);
+            }
+            _audioSource.Play();
+            Destroy(this.gameObject,2.35f);
+        }
     }
 }
